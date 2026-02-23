@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Pathology Module{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>📊 Dashboard</h1>
+</div>
+
+<div class="info-grid">
+    <div class="info-card" style="border-left-color: #3498db;">
+        <h3>Total Tests</h3>
+        <div class="value">{{ test_count }}</div>
+    </div>
+    <div class="info-card" style="border-left-color: #27ae60;">
+        <h3>Total Orders</h3>
+        <div class="value">{{ order_count }}</div>
+    </div>
+    <div class="info-card" style="border-left-color: #f39c12;">
+        <h3>Total Results</h3>
+        <div class="value">{{ result_count }}</div>
+    </div>
+    <div class="info-card" style="border-left-color: #e74c3c;">
+        <h3>Today's Orders</h3>
+        <div class="value">{{ today_orders }}</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">Quick Actions</div>
+    <div class="btn-group">
+        <a href="/tests/new" class="btn btn-primary">➕ Create New Test</a>
+        <a href="/orders/new" class="btn btn-success">📋 Create New Order</a>
+        <a href="/tests" class="btn btn-secondary">📑 Manage Tests</a>
+        <a href="/orders" class="btn btn-secondary">📋 Manage Orders</a>
+        <a href="/results" class="btn btn-secondary">📊 View Results</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">System Information</div>
+    <div class="detail-row">
+        <div class="detail-label">Module Name</div>
+        <div class="detail-value">Pathology Mini-Module</div>
+    </div>
+    <div class="detail-row">
+        <div class="detail-label">Current Version</div>
+        <div class="detail-value">1.0.0</div>
+    </div>
+    <div class="detail-row">
+        <div class="detail-label">Server Type</div>
+        <div class="detail-value">WSGI (Flask) with Server-Rendered HTML</div>
+    </div>
+    <div class="detail-row">
+        <div class="detail-label">Database</div>
+        <div class="detail-value">SQLite (Demo) / MariaDB/MySQL (Production)</div>
+    </div>
+</div>
+{% endblock %}

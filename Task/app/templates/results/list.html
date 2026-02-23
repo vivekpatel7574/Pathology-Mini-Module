@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Lab Test Results - Pathology Module{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>📊 Lab Test Results</h1>
+</div>
+
+<div class="filter-buttons">
+    <a href="/results?filter=all" class="btn btn-secondary {% if filter_type == 'all' %}active{% endif %}">All Results</a>
+    <a href="/results?filter=completed" class="btn btn-secondary {% if filter_type == 'completed' %}active{% endif %}">Completed Only</a>
+</div>
+
+{% if results %}
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Patient Name</th>
+                    <th>Test Name</th>
+                    <th>Result Value</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    <td><strong>{{ result.order.order_id }}</strong></td>
+                    <td>{{ result.order.patient_name }}</td>
+                    <td>{{ result.order.test.test_name }} ({{ result.order.test.test_code }})</td>
+                    <td>{{ result.result_value }}</td>
+                    <td>
+                        <span class="status-badge status-{{ result.status.lower() }}">{{ result.status }}</span>
+                    </td>
+                    <td>{{ result.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>
+                        <a href="/results/{{ result.id }}" class="btn btn-secondary btn-sm">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="card">
+        <div class="empty-state">
+            <p>No results found.</p>
+            <a href="/orders" class="btn btn-primary">Create Order to Add Results</a>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

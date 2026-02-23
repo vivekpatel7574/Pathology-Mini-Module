@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Pathology Tests - Pathology Module{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>📑 Pathology Tests</h1>
+    <a href="/tests/new" class="btn btn-primary">➕ Create New Test</a>
+</div>
+
+<div class="search-bar">
+    <form method="GET" style="display: flex; gap: 0.5rem; width: 100%;">
+        <input type="text" name="search" placeholder="Search by test name or code..." value="{{ search }}">
+        <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">🔍 Search</button>
+        {% if search %}
+            <a href="/tests" class="btn btn-secondary" style="padding: 0.75rem 1.5rem;">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+{% if tests %}
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Test Code</th>
+                    <th>Test Name</th>
+                    <th>Sample Type</th>
+                    <th>Normal Range</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for test in tests %}
+                <tr>
+                    <td><strong>{{ test.test_code }}</strong></td>
+                    <td>{{ test.test_name }}</td>
+                    <td>{{ test.sample_type }}</td>
+                    <td>{{ test.normal_range }}</td>
+                    <td>₹{{ "%.2f"|format(test.price) }}</td>
+                    <td>
+                        {% if test.is_active %}
+                            <span class="status-badge" style="background-color: #d4edda; color: #155724;">✓ Active</span>
+                        {% else %}
+                            <span class="status-badge" style="background-color: #f8d7da; color: #721c24;">✗ Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="/tests/{{ test.id }}/view" class="btn btn-secondary btn-sm">View</a>
+                        <a href="/tests/{{ test.id }}/edit" class="btn btn-primary btn-sm">Edit</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="card">
+        <div class="empty-state">
+            <p>No tests found.</p>
+            <a href="/tests/new" class="btn btn-primary">Create First Test</a>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

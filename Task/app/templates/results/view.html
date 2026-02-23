@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Result {{ result.id }} - Pathology Module{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="/orders">Orders</a> / <a href="/orders/{{ order.id }}">{{ order.order_id }}</a> / Result
+</div>
+
+<div class="header">
+    <h1>📊 Test Result</h1>
+    <div class="btn-group">
+        <a href="/orders/{{ order.id }}" class="btn btn-secondary">Back to Order</a>
+    </div>
+</div>
+
+<div class="view-details">
+    <div class="view-section">
+        <h2>Result Information</h2>
+        
+        <div class="detail-row">
+            <div class="detail-label">Result ID</div>
+            <div class="detail-value"><strong>#{{ result.id }}</strong></div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Order ID</div>
+            <div class="detail-value">
+                <a href="/orders/{{ order.id }}" style="color: #3498db; text-decoration: none;">
+                    {{ order.order_id }}
+                </a>
+            </div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Result Value</div>
+            <div class="detail-value"><strong>{{ result.result_value }}</strong></div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Status</div>
+            <div class="detail-value">
+                <span class="status-badge status-{{ result.status.lower() }}">{{ result.status }}</span>
+            </div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Created</div>
+            <div class="detail-value">{{ result.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Last Updated</div>
+            <div class="detail-value">{{ result.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+        </div>
+    </div>
+    
+    <div class="view-section">
+        <h2>Patient & Test Information</h2>
+        
+        <div class="detail-row">
+            <div class="detail-label">Patient Name</div>
+            <div class="detail-value">{{ order.patient_name }}</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Patient Phone</div>
+            <div class="detail-value">{{ order.patient_phone }}</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Test Name</div>
+            <div class="detail-value">{{ test.test_name }}</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Test Code</div>
+            <div class="detail-value"><strong>{{ test.test_code }}</strong></div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Normal Range</div>
+            <div class="detail-value">{{ test.normal_range }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">Technician Notes</div>
+    <div style="padding: 1rem; background-color: #f9f9f9; border-radius: 4px; min-height: 100px;">
+        {{ result.technician_notes or '<em style="color: #999;">No notes</em>' }}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">Result Actions</div>
+    
+    <div style="margin-bottom: 1rem;">
+        <strong>Current Status:</strong> <span class="status-badge status-{{ result.status.lower() }}">{{ result.status }}</span>
+    </div>
+    
+    {% if result.status == 'Draft' %}
+        <div style="background-color: #e8f4f8; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; color: #0c5460;">
+            <strong>Available Actions:</strong>
+            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                <li>Edit result details</li>
+                <li>Mark as Completed (will also update order status)</li>
+            </ul>
+        </div>
+        
+        <a href="/results/{{ result.id }}/edit" class="btn btn-primary">✏️ Edit Result</a>
+        
+        <form method="POST" action="/results/{{ result.id }}/complete" style="display: inline;">
+            <button type="submit" class="btn btn-success" onclick="return confirm('Mark this result as completed? This will also complete the related order.');">
+                ✓ Mark as Completed
+            </button>
+        </form>
+    {% elif result.status == 'Completed' %}
+        <div style="background-color: #d4edda; padding: 1rem; border-radius: 4px; color: #155724;">
+            <strong>Result Completed</strong> - This result is final and cannot be modified. 
+            The related order status has been automatically updated to Completed.
+        </div>
+        <div style="margin-top: 1rem;">
+            <a href="/orders/{{ order.id }}" class="btn btn-primary">View Order</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

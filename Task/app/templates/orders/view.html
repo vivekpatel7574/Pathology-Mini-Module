@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}{{ order.order_id }} - Pathology Module{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="/orders">Orders</a> / {{ order.order_id }}
+</div>
+
+<div class="header">
+    <h1>📋 {{ order.order_id }}</h1>
+    <div class="btn-group">
+        <a href="/orders" class="btn btn-secondary">Back to Orders</a>
+    </div>
+</div>
+
+<div class="view-details">
+    <div class="view-section">
+        <h2>Order Information</h2>
+        
+        <div class="detail-row">
+            <div class="detail-label">Order ID</div>
+            <div class="detail-value"><strong>{{ order.order_id }}</strong></div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Patient Name</div>
+            <div class="detail-value">{{ order.patient_name }}</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Patient Phone</div>
+            <div class="detail-value">{{ order.patient_phone }}</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Order Date</div>
+            <div class="detail-value">{{ order.order_date.strftime('%Y-%m-%d') }}</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Status</div>
+            <div class="detail-value">
+                <span class="status-badge status-{{ order.status.lower() }}">{{ order.status }}</span>
+            </div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Created</div>
+            <div class="detail-value">{{ order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+        </div>
+    </div>
+    
+    <div class="view-section">
+        <h2>Test Information</h2>
+        
+        <div class="detail-row">
+            <div class="detail-label">Test Code</div>
+            <div class="detail-value"><strong>{{ order.test.test_code }}</strong></div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Test Name</div>
+            <div class="detail-value">
+                <a href="/tests/{{ order.test.id }}/view" style="color: #3498db; text-decoration: none;">
+                    {{ order.test.test_name }}
+                </a>
+            </div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Sample Type</div>
+            <div class="detail-value">{{ order.test.sample_type }}</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Normal Range</div>
+            <div class="detail-value">{{ order.test.normal_range }}</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Price</div>
+            <div class="detail-value">₹{{ "%.2f"|format(order.test.price) }}</div>
+        </div>
+    </div>
+</div>
+
+{% if result %}
+<div class="card">
+    <div class="card-header">✅ Test Result</div>
+    
+    <div class="detail-row">
+        <div class="detail-label">Result Value</div>
+        <div class="detail-value"><strong>{{ result.result_value }}</strong></div>
+    </div>
+    
+    <div class="detail-row">
+        <div class="detail-label">Status</div>
+        <div class="detail-value">
+            <span class="status-badge status-{{ result.status.lower() }}">{{ result.status }}</span>
+        </div>
+    </div>
+    
+    <div class="detail-row">
+        <div class="detail-label">Technician Notes</div>
+        <div class="detail-value">{{ result.technician_notes or 'N/A' }}</div>
+    </div>
+    
+    <div class="detail-row">
+        <div class="detail-label">Result Created</div>
+        <div class="detail-value">{{ result.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+    </div>
+    
+    <div class="action-buttons">
+        <a href="/results/{{ result.id }}" class="btn btn-primary">View Result Details</a>
+        {% if result.status == 'Draft' %}
+            <a href="/results/{{ result.id }}/edit" class="btn btn-primary">Edit Result</a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header">Order Actions</div>
+    
+    <div style="margin-bottom: 1rem;">
+        <strong>Current Status:</strong> <span class="status-badge status-{{ order.status.lower() }}">{{ order.status }}</span>
+    </div>
+    
+    {% if order.status == 'Draft' %}
+        <div style="background-color: #e8f4f8; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; color: #0c5460;">
+            <strong>Available Actions:</strong>
+            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                <li>Transition to <strong>Ordered</strong> status</li>
+                <li>Cancel this order</li>
+            </ul>
+        </div>
+        
+        <form method="POST" action="/orders/{{ order.id }}/status" style="display: inline;">
+            <input type="hidden" name="status" value="Ordered">
+            <button type="submit" class="btn btn-success">✓ Mark as Ordered</button>
+        </form>
+        
+        <form method="POST" action="/orders/{{ order.id }}/cancel" style="display: inline;">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Cancel this order?');">✗ Cancel Order</button>
+        </form>
+    {% elif order.status == 'Ordered' %}
+        <div style="background-color: #fff3cd; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; color: #856404;">
+            <strong>Available Actions:</strong>
+            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                <li>Create or update test result</li>
+                <li>Cancel this order</li>
+            </ul>
+        </div>
+        
+        {% if result %}
+            <a href="/results/{{ result.id }}" class="btn btn-primary">View/Edit Result</a>
+        {% else %}
+            <a href="/orders/{{ order.id }}/result/new" class="btn btn-success">➕ Create Result</a>
+        {% endif %}
+        
+        <form method="POST" action="/orders/{{ order.id }}/cancel" style="display: inline;">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Cancel this order?');">✗ Cancel Order</button>
+        </form>
+    {% elif order.status == 'Completed' %}
+        <div style="background-color: #d4edda; padding: 1rem; border-radius: 4px; color: #155724;">
+            <strong>Order Completed</strong> - Result has been finalized. No further actions available.
+        </div>
+        {% if result %}
+            <a href="/results/{{ result.id }}" class="btn btn-primary" style="margin-top: 1rem;">View Result</a>
+        {% endif %}
+    {% elif order.status == 'Cancelled' %}
+        <div style="background-color: #f8d7da; padding: 1rem; border-radius: 4px; color: #721c24;">
+            <strong>Order Cancelled</strong> - This order has been cancelled and cannot be modified.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

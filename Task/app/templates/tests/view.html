@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}{{ test.test_name }} - Pathology Module{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="/tests">Tests</a> / {{ test.test_code }}
+</div>
+
+<div class="header">
+    <h1>🔬 {{ test.test_name }}</h1>
+    <div class="btn-group">
+        <a href="/tests/{{ test.id }}/edit" class="btn btn-primary">✏️ Edit</a>
+        <a href="/tests" class="btn btn-secondary">Back to Tests</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">Test Details</div>
+    
+    <div class="detail-row">
+        <div class="detail-label">Test Code</div>
+        <div class="detail-value"><strong>{{ test.test_code }}</strong></div>
+    </div>
+    
+    <div class="detail-row">
+        <div class="detail-label">Test Name</div>
+        <div class="detail-value">{{ test.test_name }}</div>
+    </div>
+    
+    <div class="detail-row">
+        <div class="detail-label">Sample Type</div>
+        <div class="detail-value">{{ test.sample_type }}</div>
+    </div>
+    
+    <div class="detail-row">
+        <div class="detail-label">Normal Range</div>
+        <div class="detail-value">{{ test.normal_range }}</div>
+    </div>
+    
+    <div class="detail-row">
+        <div class="detail-label">Price</div>
+        <div class="detail-value">₹{{ "%.2f"|format(test.price) }}</div>
+    </div>
+    
+    <div class="detail-row">
+        <div class="detail-label">Status</div>
+        <div class="detail-value">
+            {% if test.is_active %}
+                <span class="status-badge" style="background-color: #d4edda; color: #155724;">✓ Active</span>
+            {% else %}
+                <span class="status-badge" style="background-color: #f8d7da; color: #721c24;">✗ Inactive</span>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="detail-row">
+        <div class="detail-label">Created</div>
+        <div class="detail-value">{{ test.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+    </div>
+    
+    <div class="detail-row">
+        <div class="detail-label">Last Updated</div>
+        <div class="detail-value">{{ test.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">Statistics</div>
+    
+    <div class="detail-row">
+        <div class="detail-label">Total Orders</div>
+        <div class="detail-value">{{ test.lab_orders|length }}</div>
+    </div>
+</div>
+{% endblock %}

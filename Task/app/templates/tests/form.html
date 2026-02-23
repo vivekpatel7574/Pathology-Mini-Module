@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}{% if test %}Edit{% else %}Create{% endif %} Test - Pathology Module{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>{% if test %}✏️ Edit Test{% else %}➕ Create New Test{% endif %}</h1>
+</div>
+
+<div class="card" style="max-width: 600px;">
+    <form method="POST">
+        <div class="form-group">
+            <label for="test_code">Test Code *</label>
+            <input type="text" id="test_code" name="test_code" 
+                   value="{{ test.test_code if test else '' }}" 
+                   {% if test %}disabled{% endif %} required>
+            <small style="color: #7f8c8d;">Unique identifier (e.g., CBC, TSH)</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="test_name">Test Name *</label>
+            <input type="text" id="test_name" name="test_name" 
+                   value="{{ test.test_name if test else '' }}" required>
+            <small style="color: #7f8c8d;">Full name of the test</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="sample_type">Sample Type *</label>
+            <input type="text" id="sample_type" name="sample_type" 
+                   value="{{ test.sample_type if test else '' }}" 
+                   {% if test %}disabled{% endif %} 
+                   placeholder="e.g., Blood, Urine, Serum" required>
+            <small style="color: #7f8c8d;">Type of sample required (cannot be changed)</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="normal_range">Normal Range *</label>
+            <input type="text" id="normal_range" name="normal_range" 
+                   value="{{ test.normal_range if test else '' }}" 
+                   placeholder="e.g., 4.5-11.0 (10^9/L)" required>
+            <small style="color: #7f8c8d;">Expected normal value range</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="price">Price (INR) *</label>
+            <input type="number" id="price" name="price" step="0.01" min="0.01"
+                   value="{{ test.price if test else '' }}" required>
+            <small style="color: #7f8c8d;">Cost of the test in Indian Rupees</small>
+        </div>
+        
+        <div class="form-group">
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="is_active" name="is_active" 
+                       {% if test is none or test.is_active %}checked{% endif %}>
+                <label for="is_active" style="margin-bottom: 0;">
+                    Active (only active tests can be ordered)
+                </label>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <a href="/tests" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-success">
+                {% if test %}Update Test{% else %}Create Test{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

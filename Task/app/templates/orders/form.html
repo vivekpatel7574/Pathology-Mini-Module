@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}{% if order %}Edit{% else %}Create{% endif %} Order - Pathology Module{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>{% if order %}✏️ Edit Order{% else %}➕ Create New Order{% endif %}</h1>
+</div>
+
+<div class="card" style="max-width: 600px;">
+    <form method="POST">
+        <div class="form-group">
+            <label for="patient_name">Patient Name *</label>
+            <input type="text" id="patient_name" name="patient_name" 
+                   value="{{ order.patient_name if order else '' }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="patient_phone">Patient Phone *</label>
+            <input type="tel" id="patient_phone" name="patient_phone" 
+                   value="{{ order.patient_phone if order else '' }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="test_id">Select Test *</label>
+            <select id="test_id" name="test_id" required>
+                <option value="">-- Select a test --</option>
+                {% for test in tests %}
+                    <option value="{{ test.id }}" 
+                            {% if order and order.test_id == test.id %}selected{% endif %}>
+                        {{ test.test_name }} ({{ test.test_code }}) - ₹{{ "%.2f"|format(test.price) }}
+                    </option>
+                {% endfor %}
+            </select>
+            <small style="color: #7f8c8d;">Only active tests are available</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="order_date">Order Date *</label>
+            <input type="date" id="order_date" name="order_date" 
+                   value="{{ order.order_date.isoformat() if order else '' }}" 
+                   min="{{ today }}" required>
+            <small style="color: #7f8c8d;">Cannot be in the past</small>
+        </div>
+        
+        {% if order %}
+        <div class="form-group">
+            <label for="status">Status</label>
+            <input type="text" id="status" value="{{ order.status }}" disabled>
+            <small style="color: #7f8c8d;">Status is managed through order actions</small>
+        </div>
+        {% else %}
+        <div class="form-group">
+            <div style="background-color: #e8f4f8; padding: 1rem; border-radius: 4px; color: #0c5460;">
+                <strong>Note:</strong> New orders start in <strong>Draft</strong> status. You can transition them to 
+                <strong>Ordered</strong> after creation.
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="form-actions">
+            <a href="/orders" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-success">
+                {% if order %}Update Order{% else %}Create Order{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

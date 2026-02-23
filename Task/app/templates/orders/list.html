@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Lab Test Orders - Pathology Module{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>📋 Lab Test Orders</h1>
+    <a href="/orders/new" class="btn btn-primary">➕ Create New Order</a>
+</div>
+
+<div class="filter-buttons">
+    <a href="/orders?filter=all" class="btn btn-secondary {% if filter_type == 'all' %}active{% endif %}">All Orders</a>
+    <a href="/orders?filter=today" class="btn btn-secondary {% if filter_type == 'today' %}active{% endif %}">Today's Orders</a>
+    {% for status in statuses %}
+        <a href="/orders?filter={{ status }}" class="btn btn-secondary {% if filter_type == status %}active{% endif %}">{{ status }}</a>
+    {% endfor %}
+</div>
+
+<div class="search-bar">
+    <form method="GET" style="display: flex; gap: 0.5rem; width: 100%;">
+        <input type="text" name="search" placeholder="Search by order ID or patient name..." value="{{ search }}">
+        <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">🔍 Search</button>
+        {% if search %}
+            <a href="/orders" class="btn btn-secondary" style="padding: 0.75rem 1.5rem;">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+{% if orders %}
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Patient Name</th>
+                    <th>Phone</th>
+                    <th>Test</th>
+                    <th>Order Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td><strong>{{ order.order_id }}</strong></td>
+                    <td>{{ order.patient_name }}</td>
+                    <td>{{ order.patient_phone }}</td>
+                    <td>{{ order.test.test_name }} ({{ order.test.test_code }})</td>
+                    <td>{{ order.order_date.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <span class="status-badge status-{{ order.status.lower() }}">{{ order.status }}</span>
+                    </td>
+                    <td>
+                        <a href="/orders/{{ order.id }}" class="btn btn-secondary btn-sm">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="card">
+        <div class="empty-state">
+            <p>No orders found.</p>
+            <a href="/orders/new" class="btn btn-primary">Create First Order</a>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

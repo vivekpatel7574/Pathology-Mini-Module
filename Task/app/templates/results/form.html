@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}{% if result %}Edit{% else %}Create{% endif %} Result - Pathology Module{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>{% if result %}✏️ Edit Result{% else %}➕ Create Result{% endif %}</h1>
+</div>
+
+<div class="card" style="max-width: 600px;">
+    <div style="background-color: #e8f4f8; padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem; color: #0c5460;">
+        <strong>Order:</strong> {{ order.order_id }} | 
+        <strong>Patient:</strong> {{ order.patient_name }} | 
+        <strong>Test:</strong> {{ order.test.test_name }}
+    </div>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label for="result_value">Result Value *</label>
+            <input type="text" id="result_value" name="result_value" 
+                   value="{{ result.result_value if result else '' }}" required>
+            <small style="color: #7f8c8d;">Enter the test result (e.g., "7.5", "Positive", "Normal")</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="technician_notes">Technician Notes</label>
+            <textarea id="technician_notes" name="technician_notes">{{ result.technician_notes if result else '' }}</textarea>
+            <small style="color: #7f8c8d;">Optional notes about the result or test procedure</small>
+        </div>
+        
+        {% if result %}
+        <div class="form-group">
+            <label for="status">Status</label>
+            <input type="text" id="status" value="{{ result.status }}" disabled>
+            <small style="color: #7f8c8d;">Status is managed through result actions</small>
+        </div>
+        {% else %}
+        <div class="form-group">
+            <div style="background-color: #e8f4f8; padding: 1rem; border-radius: 4px; color: #0c5460;">
+                <strong>Note:</strong> New results start in <strong>Draft</strong> status. 
+                After creation, you can mark them as <strong>Completed</strong>, which will automatically 
+                update the order status.
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="form-actions">
+            <a href="/orders/{{ order.id }}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-success">
+                {% if result %}Update Result{% else %}Create Result{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
