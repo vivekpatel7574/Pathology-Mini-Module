@@ -105,20 +105,20 @@ def seed_db():
         if created_tests:
             orders_data = [
                 {
-                    'patient_name': 'John Doe',
-                    'patient_phone': '+1-555-0101',
+                    'patient_name': 'Mr patel',
+                    'patient_phone': '+91 9898745612',
                     'test_id': created_tests[0].id,
                     'order_date': date.today(),
                 },
                 {
-                    'patient_name': 'Jane Smith',
-                    'patient_phone': '+1-555-0102',
+                    'patient_name': 'Patel Sir',
+                    'patient_phone': '9898255612',
                     'test_id': created_tests[1].id,
                     'order_date': date.today(),
                 },
                 {
-                    'patient_name': 'Bob Johnson',
-                    'patient_phone': '+1-555-0103',
+                    'patient_name': 'V',
+                    'patient_phone': '9898745625',
                     'test_id': created_tests[2].id,
                     'order_date': date.today() + timedelta(days=1),
                 },
@@ -152,3 +152,4 @@ if __name__ == '__main__':
     print()
     
     app.run(debug=True, host='0.0.0.0', port=5000)
+
